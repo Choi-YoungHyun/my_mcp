@@ -1,0 +1,36 @@
+1. pdf_reader = stido 방식으로 되지 않음... 
+    > 해결법: sse 방식으로 자체 로컬로 mcp_server_pdf.py  실행  후 하면 가능
+
+2. ppt_reader = ok
+3. 멀티 doc 기능 만들어보기
+
+
+3. smithery에서 다른 mcp 연결시켜보려함
+    > 에러상태
+    > cursor ai mcp에 연결해봄  > 정상 확인 
+    > 뭐가 문제니 ????????????????
+    > 문제의 코드
+        > 아래 커멘드를 cmd 명령어로 바꿔봄
+        > cmd /c npx -y @smithery/cli@latest run @hyperbrowserai/mcp --key 8228c978-24b4-42a8-8867-288ac225f297
+        > 소켓 잘 열림
+    > mcp_client에서 실행시 인증 에러
+        >Error: ToolException('HyperbrowserError: [Hyperbrowser]: NOT AUTHENTICATED')
+        Please fix your mistakes.
+
+        > http라 그런가 ?
+
+
+  "hyperbrowers": {
+    "command": "cmd",
+    "args": [
+      "/c",
+      "npx",
+      "-y",
+      "@smithery/cli@latest",
+      "run",
+      "@hyperbrowserai/mcp",
+      "--key",
+      "8228c978-24b4-42a8-8867-288ac225f297"
+    ]
+  }
+    

@@ -1,0 +1,138 @@
+import streamlit as st
+import os
+import sys
+from pathlib import Path
+from typing import List
+
+from dotenv import load_dotenv
+from langchain_core.documents import Document
+from mcp.server.fastmcp import FastMCP
+
+from rag import PPTRetrievalChain
+import config
+
+
+load_dotenv()
+
+DATA_DIR = Path(os.getenv("DATA_DIR", config.DATA_DIR))
+ppt_files = list(DATA_DIR.glob("*.pptx"))
+ppt_paths = [str(path) for path in ppt_files]
+VECTOR_DIR = Path(os.getenv("VECTOR_DIR", config.VECTOR_DIR))
+
+rag_chain = PPTRetrievalChain(
+    source_uri = ppt_paths,
+    persist_directory = str(VECTOR_DIR),
+    k = config.DEFAULT_TOP_K,
+    embedding_model = config.DEFAULT_EMBEDDING_MODEL,
+    llm_model = config.DEFAULT_LLM_MODEL
+).initialize()
+
+
+mcp = FastMCP(
+    name="PPT-RAG",
+    version="0.0.1",
+    description="RAG Search(test1, test2, test3)",
+    port=8001
+)
+
+
+def format_search_results(docs: List[Document]) -> str:
+    """
+    Format search results as markdown.
+    
+    Args:
+        docs: List of documents to format
+        
+    Returns:
+        Markdown formatted search results
+
+    """
+
+    if not docs:
+        return "No relevant information found."
+    
+    markdown_results = "## Search Results\n\n"
+    
+    for i, doc in enumerate(docs, 1):
+        source = doc.metadata.get("source", "Unknown source")
+        page = doc.metadata.get("page", None)
+        page_info = f" (Page: {page+1})" if page is not None else ""
+        
+        markdown_results += f"### Result {i}{page_info}\n\n"
+        markdown_results += f"{doc.page_content}\n\n"
+        markdown_results += f"Source: {source}\n\n"
+        markdown_results += "---\n\n"
+    
+    return markdown_results
+
+
+@mcp.tool()
+async def test1(query: str, top_k: int = 5) -> str:
+    print("도구 호출!")
+    print(query, flush=True)
+    print("OPEN AI가 필터링한 문자", flush=True)
+    """
+    Performs keyword-based search on PDF documents.
+    Returns the most relevant results based on exact word/phrase matches.
+    Ideal for finding specific terms, definitions, or exact phrases in documents.
+    
+    Parameters:
+        query: Search query
+        top_k: Number of results to return
+
+    """
+
+    try:
+        results = rag_chain.search_keyword(query, top_k)
+        return format_search_results(results)
+    except Exception as e:
+        error_msg = f"An error occurred during search: {str(e)}"
+        print(error_msg, file=sys.stderr)
+        return error_msg
+
+@mcp.tool()
+async def test2(query: str, top_k: int = 5) -> str:
+    st.write(config.DEFAULT_TOP_K, flush=True)
+    st.write("들어옴!!!!!!!!!!", flush=True)
+    st.write(query, flush=True)
+    """
+    Performs semantic search on PDF documents.
+    Finds content semantically similar to the query, delivering relevant information even without exact word matches.
+    Best for conceptual questions, understanding themes, or when you need information related to a topic.
+    
+    Parameters:
+        query: Search query
+        top_k: Number of results to return
+
+    """
+
+    try:
+        results = rag_chain.search_semantic(query, top_k)
+        return format_search_results(results)
+    except Exception as e:
+        return f"An error occurred during search: {str(e)}"
+
+@mcp.tool()
+async def test3(query: str, top_k: int = 5) -> str:
+    print(config.DEFAULT_TOP_K, flush=True)
+    print("들어옴!!!!!!!!!!", flush=True)
+    print(query, flush=True)
+    """
+    Performs hybrid search (keyword + semantic) on PDF documents.
+    Combines exact keyword matching and semantic similarity to deliver optimal results.
+    The most versatile search option for general questions or when unsure which search type is best.
+    
+    Parameters:
+        query: Search query
+        top_k: Number of results to return
+
+    """
+
+    try:
+        results = rag_chain.search_hybrid(query, top_k)
+        return format_search_results(results)
+    except Exception as e:
+        return f"An error occurred during search: {str(e)}"
+
+if __name__ == "__main__":
+    mcp.run(transport="sse")
