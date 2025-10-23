@@ -3,5 +3,13 @@
     "command": "python",
     "args": ["./mcp_server_time.py"],
     "transport": "stdio"
-  }
+  },
+  "PDF-RAG": {
+    "url": "http://localhost:8000/sse",
+    "transport": "sse"
+  },
+  "PPT-RAG": {
+    "url": "http://localhost:8001/sse",
+    "transport": "sse"
+  },
 }
