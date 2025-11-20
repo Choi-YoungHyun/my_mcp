@@ -239,6 +239,8 @@ class RetrievalChain(ABC):
         if not hasattr(self, 'retrievers') or self.retrievers is None:
             raise ValueError("Initialization required. Call initialize() method first.")
         
+        print(self)
+        
         return  self.retrievers["keyword"].invoke(query)
     
     def search_hybrid(self, query: str, k: Optional[int] = None) -> List[Document]:

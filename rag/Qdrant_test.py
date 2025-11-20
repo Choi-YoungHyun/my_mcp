@@ -1,14 +1,17 @@
 from typing import List, Optional, Any
 import os
-from pptx import Presentation
-
+from dotenv import load_dotenv
 
 from langchain_community.vectorstores import Qdrant
-from qdrant_client import QdrantClient
 from langchain_community.document_loaders import PDFPlumberLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from rag.base import RetrievalChain
+
+load_dotenv()
+
+
+
 
 class pdfToVectorDb_RetrievalChain(RetrievalChain):
     def __init__(self, 

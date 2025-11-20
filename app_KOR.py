@@ -128,9 +128,9 @@ if use_login and not st.session_state.authenticated:
     st.stop()
 
 # 사이드바 최상단에 저자 정보 추가 (다른 사이드바 요소보다 먼저 배치)
-st.sidebar.markdown("### ✍️ Made by [테디노트](https://youtube.com/c/teddynote) 🚀")
+st.sidebar.markdown("## 로컬 MCP 서버 단위 테스트 ##")
 st.sidebar.markdown(
-    "### 💻 [Project Page](https://github.com/teddynote-lab/langgraph-mcp-agents)"
+    "### Dubhe ###"
 )
 
 st.sidebar.divider()  # 구분선 추가

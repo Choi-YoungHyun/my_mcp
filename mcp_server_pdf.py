@@ -34,9 +34,7 @@ print("초기화 완료")
 
 
 mcp = FastMCP(
-    name="RAG",
-    version="0.0.1",
-    description="RAG Search(keyword, semantic, hybrid)"
+    name="RAG"
 )
 
 def format_search_results(docs: List[Document]) -> str:

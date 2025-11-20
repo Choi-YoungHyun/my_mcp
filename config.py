@@ -12,3 +12,5 @@ DEFAULT_CHUNK_OVERLAP = 50
 DEFAULT_TOP_K = 5
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 DEFAULT_LLM_MODEL = "gpt-4o-mini"
+
+
