@@ -1,4 +1,5 @@
 # LangGraph Agent with MCP
+# [MCP] 자체 과정중
 
 [![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![Korean](https://img.shields.io/badge/Language-한국어-red)](README_KOR.md)
 
@@ -7,7 +8,7 @@
 [![Python](https://img.shields.io/badge/Python-≥3.12-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/Version-0.1.0-orange)](https://github.com/teddylee777/langgraph-mcp-agents)
 
-![project demo](./assets/project-demo.png)
+![project demo](./assets/project-demo.png) 
 
 ## Project Overview
 
