@@ -1,6 +1,8 @@
 # LangGraph Agent with MCP
 # [MCP] 자체 과정중
 
+## 흐름  document_parser를 Sington으로 제작 후 mcp 버전으로 붙여서 테스트 (렝체인 기반)
+
 [![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![Korean](https://img.shields.io/badge/Language-한국어-red)](README_KOR.md)
 
 [![GitHub](https://img.shields.io/badge/GitHub-langgraph--mcp--agents-black?logo=github)](https://github.com/teddylee777/langgraph-mcp-agents)
