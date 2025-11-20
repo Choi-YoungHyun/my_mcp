@@ -31,4 +31,5 @@ dependencies = [
     "smbprotocol>=1.15.0",
     "docx>=0.2.4",
     "httpx>=0.28.1",
+    "qdrant-client>=1.15.1",
 ]

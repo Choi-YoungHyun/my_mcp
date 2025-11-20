@@ -1,14 +1,42 @@
-1. 도커로 실행하는거라 docker-desktop이 설치 되있어야함.
-2. dockers 폴더 > .env 생성해서 key 입력해줘야함
-3. openai, ,Anthropic (클로드)  / langsmith(트레이싱 사이트)
-4. docker compose -f docker-compose-KOR.yaml up -d
+#실행방법
+
+1. uv 설치
+    - pip install uv
+
+2. 필요라이브러리 설치 
+    -uv pip install -r requirements.txt
+
+    ✅추가 설치 
+    #uv add langchain_chroma
+        - 에러 : c++ 관련
+            > visual Studio 설치 
+
+        cf) 의존성 충돌날 경우 필수 설치 (수동)   
+            # uv add python-pptx
+            # uv add config
+            # uv add rank_bm25
+            # uv add pdfplumber
+
+3. 가상환경 실행
+    - Windows : .venv\Scripts\activate.bat
+    - Mac  : source .venv/bin/activate 
+    3-1) OFF
+        deactivate
+
+4. docker image 불러오기
+    - 도커로 실행하는거라 docker-desktop이 설치 되있어야함.
+    - dockers 폴더 > .env 생성해서 key 입력해줘야함 (복붙)
+    - openai, ,Anthropic (클로드)  / langsmith(트레이싱 사이트)
+    - docker compose -f dockers\docker-compose-KOR.yaml up -d //image 불러오기
 
 
+mcp_server 실행 
 
 
 #################################################
 client기준
-streamlit (framework) -> app_KOR.py 실행
+streamlit (framework) -> app_KOR.py 실행 
+실행명령어 : streamlit run app_KOR.py
 
 
 #################################################
@@ -16,11 +44,8 @@ streamlit (framework) -> app_KOR.py 실행
 2. rag > pdf.py에서 추상화로 생성한 class와 method 사용
 
 
-
 # pdf 요약하거나 찾는거 만들기.
-
 # case1꺼 연결 가능 근데 왜,,,?
-
 
 
 ###############################

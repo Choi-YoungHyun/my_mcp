@@ -32,7 +32,8 @@ class PDFRetrievalChain(RetrievalChain):
         super().__init__(source_uri=source_uri, persist_directory=persist_directory, **kwargs)
     
     def load_documents(self, source_uris: List[str]) -> List[Document]:
-        print(">>>>>>>>>>>>>")
+        # FIXME: VectorDB에 TXT화로 넣는 데이터 
+        print(">>>>[PDF] Loading START>>>>")
         print(source_uris)
         print(">>>>>>>>>>>>>")
         """
@@ -54,7 +55,8 @@ class PDFRetrievalChain(RetrievalChain):
             print(f"Loading PDF: {source_uri}")
             loader = PDFPlumberLoader(source_uri)
             docs.extend(loader.load())
-        
+
+        print(">>>>[PDF] Loading END>>>>")
         return docs
     
     def create_text_splitter(self) -> RecursiveCharacterTextSplitter:

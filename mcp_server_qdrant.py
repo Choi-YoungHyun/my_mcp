@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from langchain_core.documents import Document
 from mcp.server.fastmcp import FastMCP
 
-from rag import PDFRetrievalChain
+from rag import pdfToVectorDb_RetrievalChain
 import config
 
 load_dotenv()
@@ -22,9 +22,8 @@ VECTOR_DIR = Path(os.getenv("VECTOR_DIR", config.VECTOR_DIR))
 print(">>>>>>>>>>>>>>>")
 print(VECTOR_DIR)
 
-rag_chain = PDFRetrievalChain(
+rag_chain = pdfToVectorDb_RetrievalChain(
     source_uri = pdf_paths,
-    persist_directory = str(VECTOR_DIR),
     k = config.DEFAULT_TOP_K,
     embedding_model = config.DEFAULT_EMBEDDING_MODEL,
     llm_model = config.DEFAULT_LLM_MODEL
@@ -34,7 +33,9 @@ print("초기화 완료")
 
 
 mcp = FastMCP(
-    name="RAG"
+    name="RAG",
+    log_level="INFO",
+    port=8002
 )
 
 def format_search_results(docs: List[Document]) -> str:
@@ -89,9 +90,13 @@ async def keyword_search(query: str, top_k: int = 5) -> str:
         error_msg = f"An error occurred during search: {str(e)}"
         print(error_msg, file=sys.stderr)
         return error_msg
+    
+
+
 
 @mcp.tool()
 async def semantic_search(query: str, top_k: int = 5) -> str:
+    print(query, flush=True)
     st.write(config.DEFAULT_TOP_K, flush=True)
     st.write("들어옴!!!!!!!!!!", flush=True)
     st.write(query, flush=True)

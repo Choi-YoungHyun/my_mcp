@@ -32,7 +32,7 @@ from langchain_core.runnables import RunnableConfig
 
 
 
-load_dotenv(f"C:\\Users\\choiyounghyun\\Desktop\\ocr\\dockers\\.env",override=True)
+load_dotenv(f"C:\\Users\\chldu\\OneDrive\\바탕 화면\\python_project\\my_mcp_local\\dockers\\.env",override=True)
 # 환경 변수 로드 (.env 파일에서 API 키 등의 설정을 가져옴)
 # load_dotenv(override=True)
 
@@ -128,9 +128,9 @@ if use_login and not st.session_state.authenticated:
     st.stop()
 
 # 사이드바 최상단에 저자 정보 추가 (다른 사이드바 요소보다 먼저 배치)
-st.sidebar.markdown("### ✍️ Made by [테디노트](https://youtube.com/c/teddynote) 🚀")
+st.sidebar.markdown("## 로컬 MCP 서버 단위 테스트 ##")
 st.sidebar.markdown(
-    "### 💻 [Project Page](https://github.com/teddynote-lab/langgraph-mcp-agents)"
+    "### Dubhe ###"
 )
 
 st.sidebar.divider()  # 구분선 추가
@@ -295,6 +295,8 @@ def get_streaming_callback(text_placeholder, tool_placeholder):
             # 콘텐츠가 리스트 형태인 경우 (Claude 모델 등에서 주로 발생)
             if isinstance(content, list) and len(content) > 0:
                 message_chunk = content[0]
+                print(f">>>>>>>>>>>>>>>>>>>>>>메세지 청크{message_chunk}")
+                print(f">>>>>>>>>>>>>>>>>>>>>>타입{message_chunk['type']}")
                 # 텍스트 타입인 경우 처리
                 if message_chunk["type"] == "text":
                     accumulated_text.append(message_chunk["text"])
@@ -426,7 +428,7 @@ async def process_query(query, text_placeholder, tool_placeholder, timeout_secon
 
 
 async def initialize_session(mcp_config=None):
-    """
+    """initialize_session
     MCP 세션과 에이전트를 초기화합니다.
 
     매개변수:
@@ -442,11 +444,26 @@ async def initialize_session(mcp_config=None):
         if mcp_config is None:
             # config.json 파일에서 설정 로드
             mcp_config = load_config_from_json()
+
+        # ① 클라이언트 생성
         client = MultiServerMCPClient(mcp_config)
-        await client.__aenter__()
-        tools = client.get_tools()
+
+        # ② 최신 방식: async with 제거 → 그냥 await get_tools() 호출
+        tools = await client.get_tools()   # ✅ 중요: await 붙이기
+
+        # ③ 세션 상태 저장
         st.session_state.tool_count = len(tools)
         st.session_state.mcp_client = client
+
+
+        # if mcp_config is None:
+        #     # config.json 파일에서 설정 로드
+        #     mcp_config = load_config_from_json()
+        # client = MultiServerMCPClient(mcp_config)
+        # await client.__aenter__()  #지원안함
+        # await tools = client.get_tools()
+        # st.session_state.tool_count = len(tools)
+        # st.session_state.mcp_client = client
 
         # 선택된 모델에 따라 적절한 모델 초기화
         selected_model = st.session_state.selected_model

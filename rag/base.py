@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 
-from langchain.retrievers.ensemble import EnsembleRetriever
+# from langchain_community.retrievers import EnsembleRetriever #FIXME 2024년ㄷ
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
@@ -32,7 +32,7 @@ class RetrievalChain(ABC):
         self.source_uri = kwargs.get("source_uri", [])
         self.k = kwargs.get("k", 5)
         self.embedding_model = kwargs.get("embedding_model", "text-embedding-3-small")
-        self.persist_directory = kwargs.get("persist_directory", None)
+        self.persist_directory = kwargs.get("persist_directory", "qdrant_vector_db")
         self.embeddings = None
         self.vectorstore = None
         self.retrievers = None
@@ -129,25 +129,26 @@ class RetrievalChain(ABC):
 
         return BM25Retriever.from_documents(split_docs, k=self.k)
     
-    def create_hybrid_retriever(self, split_docs: List[Document], vectorstore: Any) -> BaseRetriever:
-        """
-        Create a hybrid search retriever combining keyword and semantic search.
+    #TODO: EnsembleRetriever이 라이브러리상 사라짐 (2025.10.22 by Choi)
+    # def create_hybrid_retriever(self, split_docs: List[Document], vectorstore: Any) -> BaseRetriever:
+    #     """
+    #     Create a hybrid search retriever combining keyword and semantic search.
         
-        Args:
-            split_docs: Split document chunks
-            vectorstore: Vector store instance
+    #     Args:
+    #         split_docs: Split document chunks
+    #         vectorstore: Vector store instance
             
-        Returns:
-            A hybrid search retriever
-        """
+    #     Returns:
+    #         A hybrid search retriever
+    #     """
 
-        bm25_retriever = self.create_keyword_retriever(split_docs)
-        dense_retriever = self.create_semantic_retriever(vectorstore)
+    #     bm25_retriever = self.create_keyword_retriever(split_docs)
+    #     dense_retriever = self.create_semantic_retriever(vectorstore)
         
-        return EnsembleRetriever(
-            retrievers=[bm25_retriever, dense_retriever],
-            weights=[0.5, 0.5]
-        )
+    #     return EnsembleRetriever(
+    #         retrievers=[bm25_retriever, dense_retriever],
+    #         weights=[0.5, 0.5]
+    #     )
     
     def create_retrievers(self, split_docs: List[Document]) -> Dict[str, BaseRetriever]:
         """
@@ -163,10 +164,15 @@ class RetrievalChain(ABC):
         self.embeddings = self.create_embedding()
         self.vectorstore = self.create_vectorstore(split_docs)
         
+        # return {
+        #     "semantic": self.create_semantic_retriever(self.vectorstore),
+        #     "keyword": self.create_keyword_retriever(split_docs),
+        #     "hybrid": self.create_hybrid_retriever(split_docs, self.vectorstore)
+        # }
+    
         return {
             "semantic": self.create_semantic_retriever(self.vectorstore),
-            "keyword": self.create_keyword_retriever(split_docs),
-            "hybrid": self.create_hybrid_retriever(split_docs, self.vectorstore)
+            "keyword": self.create_keyword_retriever(split_docs)
         }
     
     def initialize(self) -> "RetrievalChain":
@@ -191,7 +197,7 @@ class RetrievalChain(ABC):
         print(f"Initialization complete: {len(self.split_docs)} chunks created")
         return self
     
-    def search_semantic(self, query: str, k: Optional[int] = None) -> List[Document]:
+    async def search_semantic(self, query: str, k: Optional[int] = None) -> List[Document]:
         """
         Perform semantic search on the loaded documents.
         
@@ -233,7 +239,9 @@ class RetrievalChain(ABC):
         if not hasattr(self, 'retrievers') or self.retrievers is None:
             raise ValueError("Initialization required. Call initialize() method first.")
         
-        return self.retrievers["keyword"].get_relevant_documents(query)
+        print(self)
+        
+        return  self.retrievers["keyword"].invoke(query)
     
     def search_hybrid(self, query: str, k: Optional[int] = None) -> List[Document]:
         """
